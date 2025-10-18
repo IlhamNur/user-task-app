@@ -9,30 +9,27 @@ use Yajra\DataTables\Facades\DataTables;
 
 class TaskController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = Task::with('user');
+            $query = Task::with('user')->select('tasks.*');
 
-            if ($request->user()->role !== 'admin') {
-                $query->where('user_id', $request->user()->id);
+            if (Auth::user()->role !== 'admin') {
+                $query->where('user_id', Auth::id());
             }
 
             return DataTables::of($query)
-                ->addColumn('action', function ($task) {
-                    return view('tasks.partials.actions', compact('task'))->render();
+                ->addColumn('user', fn($row) => $row->user->name ?? '-')
+                ->addColumn('action', function ($row) {
+                    return '
+                        <button class="btn-edit" data-id="' . $row->id . '">Edit</button>
+                        <button class="btn-delete" data-id="' . $row->id . '">Hapus</button>
+                    ';
                 })
-                ->editColumn('status', function ($task) {
-                    return ucfirst($task->status);
-                })
+                ->rawColumns(['action'])
                 ->make(true);
         }
 
@@ -44,18 +41,7 @@ class TaskController extends Controller
      */
     public function create(Request $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'required|in:to-do,in-progress,done',
-        ]);
-
-        $data = $request->only('title', 'description', 'status');
-        $data['user_id'] = $request->user()->id;
-
-        $task = Task::create($data);
-
-        return response()->json(['success' => true, 'task' => $task]);
+        //
     }
 
     /**
@@ -69,10 +55,12 @@ class TaskController extends Controller
             'status' => 'required|in:to-do,in-progress,done',
         ]);
 
-        $data = $request->only('title', 'description', 'status');
-        $data['user_id'] = $request->user()->id;
-
-        $task = Task::create($data);
+        $task = Task::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'status' => $request->status,
+            'user_id' => Auth::id(),
+        ]);
 
         return response()->json(['success' => true, 'task' => $task]);
     }
@@ -90,7 +78,7 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        $this->authorizeTaskOwner($task);
+        $this->authorizeTask($task);
         return response()->json($task);
     }
 
@@ -99,7 +87,7 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        $this->authorizeTaskOwner($task);
+        $this->authorizeTask($task);
 
         $request->validate([
             'title' => 'required|string|max:255',
@@ -108,7 +96,8 @@ class TaskController extends Controller
         ]);
 
         $task->update($request->only('title', 'description', 'status'));
-        return response()->json(['success' => true, 'task' => $task]);
+
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -116,16 +105,17 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        $this->authorizeTaskOwner($task);
+        $this->authorizeTask($task);
         $task->delete();
+
         return response()->json(['success' => true]);
     }
 
-    protected function authorizeTaskOwner(Task $task)
+    protected function authorizeTask(Task $task)
     {
-        $user = auth()->user();
+        $user = Auth::user();
         if ($user->role !== 'admin' && $task->user_id !== $user->id) {
-            abort(403);
+            abort(403, 'Tidak diizinkan.');
         }
     }
 }

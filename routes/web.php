@@ -19,12 +19,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware('auth')->group(function () {
-    Route::resource('tasks', TaskController::class)->except(['create', 'show']); // kita pakai modal form via JS
+Route::middleware(['auth'])->group(function () {
+    Route::resource('tasks', TaskController::class)->except(['create', 'show']);
 });
 
 Route::middleware(['auth', 'is_admin'])->group(function () {
-    Route::resource('users', UserController::class);
+    Route::resource('users', UserController::class)->except(['create', 'show']);
 });
+
 
 require __DIR__ . '/auth.php';

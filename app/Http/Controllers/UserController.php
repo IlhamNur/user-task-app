@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -11,7 +13,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $users = User::latest()->get();
+        return view('users.index', compact('users'));
     }
 
     /**
@@ -28,11 +31,20 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $userId,
-            'role' => 'required|in:admin,user',
-            'password' => $creating ? 'required|min:8' : 'nullable|min:8'
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users',
+            'password' => 'required|min:6',
+            'role'     => 'required|in:admin,user',
         ]);
+
+        User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
+            'role'     => $request->role,
+        ]);
+
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -46,24 +58,41 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $user)
     {
-        //
+        return response()->json($user);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $user)
     {
-        //
+        $request->validate([
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'role'  => 'required|in:admin,user',
+        ]);
+
+        $user->update([
+            'name'  => $request->name,
+            'email' => $request->email,
+            'role'  => $request->role,
+        ]);
+
+        return response()->json(['success' => true]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
-        //
+        if (auth()->id() === $user->id) {
+            return response()->json(['error' => 'Tidak dapat menghapus diri sendiri'], 403);
+        }
+
+        $user->delete();
+        return response()->json(['success' => true]);
     }
 }

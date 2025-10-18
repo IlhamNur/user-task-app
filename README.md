@@ -1,61 +1,187 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🧩 Backend Technical Test – Task Management System (Laravel 12 + AJAX + DataTables)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sebuah aplikasi **manajemen task dan user** berbasis web yang dibangun dengan **Laravel 12**, **Bootstrap 5**, dan **AJAX DataTables**.  
+Aplikasi ini mendukung fitur **CRUD tanpa reload**, **role-based access control (admin & user)**, serta **notifikasi interaktif dengan SweetAlert2**.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 🗂️ Manajemen Task
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- CRUD task menggunakan **AJAX + DataTables (server-side)**  
+- Status task: `To Do`, `In Progress`, `Done`  
+- Validasi input real-time dengan SweetAlert  
+- Spinner loading & feedback interaktif  
 
-## Learning Laravel
+### 👥 Manajemen Pengguna (Role Admin)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- CRUD user dengan modal form (AJAX)  
+- Role `admin` dan `user`  
+- Proteksi akses: hanya admin yang bisa mengelola user  
+- Tidak bisa menghapus diri sendiri (self-delete protection)  
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 🔒 Keamanan & UX
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Middleware `auth` dan `is_admin`  
+- CSRF token otomatis di setiap AJAX request  
+- Handling error global (401 / 403)  
+- Spinner loader saat aksi berjalan  
+- Popup konfirmasi penghapusan (SweetAlert2)
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🧱 Teknologi yang Digunakan
 
-### Premium Partners
+| Komponen | Versi / Teknologi |
+|-----------|--------------------|
+| **Framework** | Laravel 12.x |
+| **PHP** | 8.4+ |
+| **Database** | MySQL / MariaDB |
+| **Frontend** | Bootstrap 5.3, jQuery 3.7, SweetAlert2 |
+| **DataTables** | 1.13.8 + Responsive Plugin |
+| **Auth** | Laravel Breeze / Jetstream (bisa disesuaikan) |
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## ⚙️ Cara Instalasi
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 1️⃣ Clone Repository
 
-## Code of Conduct
+```bash
+git clone https://github.com/IlhamNur/user-task-app.git
+cd user-task-app
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 2️⃣ Instal Dependensi
 
-## Security Vulnerabilities
+```bash
+composer install
+npm install && npm run build
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 3️⃣ Konfigurasi Environment
 
-## License
+Buat file `.env`:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+cp .env.example .env
+```
+
+Edit konfigurasi database sesuai lokal kamu:
+
+```
+DB_DATABASE=user_task
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 4️⃣ Generate Key & Migrasi Database
+
+```bash
+php artisan key:generate
+php artisan migrate --seed
+```
+
+Seeder akan otomatis membuat akun admin:
+
+```
+Email: admin@example.com
+Password: password
+```
+
+### 5️⃣ Jalankan Server
+
+```bash
+composer run dev
+```
+
+Akses aplikasi di:  
+👉 **<http://127.0.0.1:8000>**
+
+---
+
+## 🧑‍💻 Login Default
+
+| Role | Email | Password |
+|------|--------|-----------|
+| **Admin** | <admin@example.com> | password |
+| **User (optional)** | <user@example.com> | password |
+
+---
+
+## 📂 Struktur Project
+
+```
+app/
+ ├── Http/
+ │    ├── Controllers/
+ │    │     ├── TaskController.php
+ │    │     └── UserController.php
+ │    ├── Middleware/
+ │    │     └── IsAdmin.php
+ │
+ ├── Models/
+ │    ├── Task.php
+ │    └── User.php
+
+resources/
+ ├── views/
+ │    ├── layouts/
+ │    │     └── app.blade.php
+ │    ├── tasks/
+ │    │     └── index.blade.php
+ │    └── users/
+ │          └── index.blade.php
+
+routes/
+ └── web.php
+```
+
+---
+
+## 💡 Catatan Penggunaan
+
+- Semua **aksi CRUD berjalan tanpa reload (AJAX)**.
+- Admin-only page: `/users`
+- Semua endpoint task terproteksi oleh middleware `auth`.
+- Hapus task atau user akan menampilkan **konfirmasi SweetAlert2**.
+- Validasi form menggunakan sistem bawaan Laravel (`$request->validate()`).
+
+---
+
+## 🧰 Endpoint Utama (REST API)
+
+| Endpoint | Method | Deskripsi |
+|-----------|---------|-----------|
+| `/tasks` | GET | Menampilkan daftar task (DataTables AJAX) |
+| `/tasks` | POST | Menambahkan task baru |
+| `/tasks/{id}` | PUT | Mengubah task |
+| `/tasks/{id}` | DELETE | Menghapus task |
+| `/users` | GET | Menampilkan daftar user (admin only) |
+| `/users/{id}` | PUT | Update data user |
+| `/users/{id}` | DELETE | Hapus user |
+
+---
+
+## 🪄 Fitur Tambahan (Opsional)
+
+✅ Export DataTables ke Excel/PDF  
+✅ Filter task berdasarkan status  
+✅ Integrasi AI Asisten (opsional di brief)  
+✅ Unit Test dasar (`php artisan test`)  
+
+---
+
+## 🧑‍🏫 Pengembang
+
+**Nama:** Ilham Nur  
+**Email:** <romdhoninuril@gmail.com>  
+**GitHub:** [@ilhamnur](https://github.com/IlhamNur)
+
+---
+
+## 🏁 Lisensi
+
+Aplikasi ini dikembangkan untuk keperluan **technical test backend developer**  
+dan dapat digunakan untuk pembelajaran atau pengujian internal.
