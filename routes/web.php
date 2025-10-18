@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,4 +19,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+Route::middleware('auth')->group(function () {
+    Route::resource('tasks', TaskController::class)->except(['create', 'show']); // kita pakai modal form via JS
+});
+
+Route::middleware(['auth', 'is_admin'])->group(function () {
+    Route::resource('users', UserController::class);
+});
+
+require __DIR__ . '/auth.php';
