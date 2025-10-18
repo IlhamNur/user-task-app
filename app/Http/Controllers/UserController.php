@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -13,7 +14,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::latest()->get();
+        $users = User::orderBy('id', 'desc')->paginate(10);
         return view('users.index', compact('users'));
     }
 
@@ -88,7 +89,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        if (auth()->id() === $user->id) {
+        if (Auth::id() === $user->id) {
             return response()->json(['error' => 'Tidak dapat menghapus diri sendiri'], 403);
         }
 

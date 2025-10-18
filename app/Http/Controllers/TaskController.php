@@ -25,8 +25,8 @@ class TaskController extends Controller
                 ->addColumn('user', fn($row) => $row->user->name ?? '-')
                 ->addColumn('action', function ($row) {
                     return '
-                        <button class="btn-edit" data-id="' . $row->id . '">Edit</button>
-                        <button class="btn-delete" data-id="' . $row->id . '">Hapus</button>
+                        <button class="btn btn-sm btn-warning btn-edit" data-id="' . $row->id . '">Edit</button>
+                        <button class="btn btn-sm btn-danger btn-delete" data-id="' . $row->id . '">Hapus</button>
                     ';
                 })
                 ->rawColumns(['action'])
