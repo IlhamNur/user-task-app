@@ -143,11 +143,9 @@
                     data: $(this).serialize(),
                     beforeSend: function(){
                         $('#btn-loader').removeClass('d-none');
-                        $('#user-form button[type=submit]').prop('disabled', true);
                     },
                     complete: function(){
                         $('#btn-loader').addClass('d-none');
-                        $('#user-form button[type=submit]').prop('disabled', true);
                     },
                     success: function(){
                         location.reload();
